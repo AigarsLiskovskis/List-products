@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block content %}
+<header>
+    <h1>Product List</h1>
+    <div class="buttons">
+        <a href="/add-product">
+            <button>ADD</button>
+        </a>
+        <button type="submit" id="delete-product-btn" form="mass-delete">MASS DELETE</button>
+    </div>
+</header>
+
+<form id="mass-delete" action="/delete" method="post">
+    <div class="container">
+        {% for product in products %}
+        <div class="product">
+            <label>
+                <input class=".delete-checkbox" type="checkbox" value="{{ product.id }}" name="delete-products[]">
+            </label>
+            <div>
+                <div>{{ product.sku }}</div>
+                <div>{{ product.name }}</div>
+                <div>{{ product.price }}</div>
+                <div>{{ product.attribute }}: {{ product.attributeValue }}  {{ product.attributeUnit }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</form>
+{% endblock %}

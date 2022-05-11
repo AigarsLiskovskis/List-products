@@ -1,0 +1,9 @@
+<div>
+    {% for field in fieldData.fields %}
+    <div id="fieldData.fieldId">
+        <label class="input-label" for="{{ field }}">{{ field }} ({{ fieldData.units }})</label>
+        <input class="field" id="{{ field }}" name="{{ field }}" type="number" min="1" step="1">
+    </div>
+    {% endfor %}
+    <p>Please, provide {{ fieldData.description }}</p>
+</div>
