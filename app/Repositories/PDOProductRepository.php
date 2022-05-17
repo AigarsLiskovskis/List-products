@@ -36,6 +36,20 @@ class PDOProductRepository implements ProductRepository
     /**
      * @throws Exception
      */
+    public function getSKU($sku): bool
+    {
+        return Database::connection()
+            ->createQueryBuilder()
+            ->select('sku')
+            ->from('products')
+            ->where('sku=?')
+            ->setParameter(0, $sku)
+            ->executeStatement();
+    }
+
+    /**
+     * @throws Exception
+     */
     public function add(array $productData): void
     {
         Database::connection()
@@ -44,7 +58,7 @@ class PDOProductRepository implements ProductRepository
                 'name' => $productData['name'],
                 'price' => $productData['price'],
                 'type' => $productData['type'],
-                'attribute_value' => $productData['attribute_value']
+                'attribute_value' => $productData['attributes']
             ]);
     }
 

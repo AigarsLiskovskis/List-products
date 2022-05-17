@@ -18,13 +18,10 @@ $builder->addDefinitions([
 $container = $builder->build();
 
 $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
-
     $r->addRoute('GET', '/', [ProductController::class, 'index']);
-
     $r->addRoute('GET', '/add-product', [ProductController::class, 'create']);
     $r->addRoute('POST', '/add-product', [ProductController::class, 'listTypes']);
     $r->addRoute('POST', '/add-product/store', [ProductController::class, 'store']);
-
     $r->addRoute('POST', '/delete', [ProductController::class, 'delete']);
 });
 

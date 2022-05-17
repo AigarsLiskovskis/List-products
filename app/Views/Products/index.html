@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 <header>
-    <h1>Product List</h1>
+    <h1 class="heading">Product List</h1>
     <div class="buttons">
         <a href="/add-product">
             <button>ADD</button>
@@ -17,7 +17,7 @@
             <label>
                 <input class=".delete-checkbox" type="checkbox" value="{{ product.id }}" name="delete-products[]">
             </label>
-            <div>
+            <div class="description">
                 <div>{{ product.sku }}</div>
                 <div>{{ product.name }}</div>
                 <div>{{ product.price }}</div>

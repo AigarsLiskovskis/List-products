@@ -3,6 +3,9 @@
 namespace App\Controllers;
 
 use App\Redirect;
+use App\Services\UniqSKU\SKUUniqueRequest;
+use App\Services\UniqSKU\SKUUniqueService;
+use App\Validation\ProductValidation;
 use App\Views\View;
 use App\Services\Add\ProductAddRequest;
 use App\Services\Add\ProductAddService;
@@ -23,7 +26,7 @@ class ProductController
         ProductIndexService  $indexService,
         ProductAddService    $addService,
         ProductDeleteService $deleteService,
-        ProductTypeService   $typeService
+        ProductTypeService   $typeService,
     )
     {
         $this->indexService = $indexService;
@@ -35,7 +38,6 @@ class ProductController
     public function index(): View
     {
         $products = $this->indexService->execute();
-
         return new View('Products/index', [
             'products' => $products,
         ]);
@@ -44,29 +46,44 @@ class ProductController
     public function create(): View
     {
         $types = $this->typeService->execute();
-        return new View('Products/create', ['types'=> $types]);
+        return new View('Products/create', ['types' => $types]);
     }
 
     public function listTypes(): View
     {
-        $fieldData = call_user_func(array('\\App\\Models\\'.$_POST['selector'], "getField"));
-        return new View('Products/typeAttributes', ['fieldData'=> $fieldData]);
+        // Call static function for selected product type
+        $fieldData = call_user_func(array('\\App\\Models\\' . $_POST['selector'], "getField"));
+        return new View('Products/typeAttributes', ['fieldData' => $fieldData]);
     }
 
-    public function store(): Redirect
+    /**
+     * @throws Exception
+     */
+    public static function uniqueSKU($sku): bool
     {
+        // Search in DB if input SKU is unique
+        return (new SKUUniqueService())->execute(new SKUUniqueRequest($sku));
+    }
 
-
-        //validate
-        var_dump($_POST);
-        exit;
-
-        //attribute_value adjust array_slice()
-
-        $productData = [$_POST];
-        $this->addService
-            ->execute(new ProductAddRequest($productData));
-        return new Redirect('/');
+    public function store(): void
+    {
+        // Validation returns array of fields and errors
+        $validate = (new ProductValidation($_POST))->validate();
+        if ($validate['errors']) {
+            echo json_encode($validate);
+        } else {
+            // Fields validated, prepare attribute values and saving product in DB
+            $productData = $_POST;
+            $values = [];
+            foreach ($productData['attributes'] as $attribute) {
+                $values[] = $attribute['value'];
+            }
+            $productData['attributes'] = implode('x', $values);
+            $this->addService
+                ->execute(new ProductAddRequest($productData));
+            echo json_encode($validate);
+            exit;
+        }
     }
 
     /**
@@ -74,11 +91,12 @@ class ProductController
      */
     public function delete(): Redirect
     {
-        if($_POST['delete-products']){
+        if ($_POST['delete-products']) {
             $this->deleteService
                 ->execute(new ProductDeleteRequest($_POST['delete-products']));
             return new Redirect('/');
         }
+
         return new Redirect('/');
     }
 }

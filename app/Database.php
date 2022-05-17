@@ -19,7 +19,7 @@ class Database
             $connectionParams = [
                 'dbname' => 'product_list',
                 'user' => 'root',
-                'password' => '',
+                'password' => 'codelex123',
                 'host' => 'localhost',
                 'driver' => 'pdo_mysql',
             ];

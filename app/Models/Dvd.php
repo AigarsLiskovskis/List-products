@@ -8,7 +8,7 @@ class Dvd extends Product
     private static array $field =
         [
             'fieldId' => 'DVD',
-            'units' => 'KG',
+            'units' => 'MB',
             'fields' => ['size'],
             'description'=> 'size'
         ];
